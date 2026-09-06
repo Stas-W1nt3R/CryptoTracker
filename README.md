@@ -54,3 +54,4 @@ cp .env.example .env
 
 # 3. Запустить в Docker
 docker-compose up --build
+```
