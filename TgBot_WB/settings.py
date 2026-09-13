@@ -37,10 +37,11 @@ API_KEY = os.getenv("API_KEY")
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'mysite',
     'rest_framework',
     'drf_spectacular',
-    'django_redis'  ,
+    'django_redis',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,6 +78,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'TgBot_WB.wsgi.application'
+
+ASGI_APPLICATION = 'TgBot_WB.asgi.application'
 
 
 # Database
@@ -147,7 +150,7 @@ MAILERS = {
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-REDIS_URL = os.getenv("REDID_URL")
+REDIS_URL = os.getenv("REDIS_URL")
 
 CACHES = {
     'default': {
@@ -161,3 +164,12 @@ CACHES = {
 
 CELERY_BROKER_URL = os.getenv("REDIS_URL")
 CELERY_RESULT_BACKEND = os.getenv("REDIS_URL")
+
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        }
+    }
+}

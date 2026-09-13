@@ -1,11 +1,12 @@
 from celery import shared_task
 from celery.schedules import crontab
 from TgBot_WB.celery import app
-from .models import UserTracking
+from .models import UserTracking, Cryptocurrency
 from django.conf import settings
 import requests
 from aiogram import Bot
 from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 @shared_task
@@ -28,7 +29,7 @@ def check_all_price():
     coin_names = set()
 
     for tracking in trackings:
-        coin_names.add(tracking.cryptocurrency.name)
+        coin_names.add(tracking.cryptocurrency.coin_id)
 
     if not coin_names:
         return
@@ -45,17 +46,23 @@ def check_all_price():
 
     for tracking in trackings:
         try:
-            crypto_name = tracking.cryptocurrency.name
-            if crypto_name not in data:
+            coin_id = tracking.cryptocurrency.coin_id
+            if coin_id not in data:
                 continue
 
-            current_price = data[tracking.cryptocurrency.name]["usd"]
+            current_price = data[tracking.cryptocurrency.coin_id]["usd"]
 
             if current_price >= tracking.target_price:
                 tracking.is_active = False
                 tracking.save()
                 chat_id = tracking.user.telegram_id
                 send_notification_to_user.delay(chat_id, tracking.id)
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)('cryptocurrency', {
+                'type': 'send_price',
+                coin_id: current_price,
+            })
 
         except UserTracking.DoesNotExist:
             continue
@@ -67,6 +74,6 @@ def check_all_price():
 app.conf.beat_schedule = {
     'check-price': {
         'task': 'mysite.tasks.check_all_price',
-        'schedule': crontab(minute='*/10'),
+        'schedule': crontab(minute='*/1'),
     }
 }

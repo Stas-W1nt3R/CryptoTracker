@@ -1,8 +1,10 @@
-from urllib import request
 from .models import Cryptocurrency, TgUser, UserTracking
 from rest_framework import viewsets
 from .serializers import CryptocurrencySerializer, TgUserSerializer, UserTrackingSerializer
 
+
+def dashboard(request):
+    return render(request, 'index.html')
 
 class CryptocurrencyViewSet(viewsets.ModelViewSet):
     queryset = Cryptocurrency.objects.all()
