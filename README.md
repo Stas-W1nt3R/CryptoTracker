@@ -45,8 +45,8 @@
 
 ```bash
   # 1. Клонировать репозиторий
-git clone https://github.com/Stas-W1nt3R/tg_crypto_bot.git
-cd tg_crypto_bot
+git clone https://github.com/Stas-W1nt3R/CryptoTracker
+cd CryptoTracker
 
 # 2. Создать .env 
 cp .env.example .env
