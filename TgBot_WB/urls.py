@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from drf_spectacular.views import SpectacularAPIView,SpectacularSwaggerView
-from mysite.views import CryptocurrencyViewSet, TgUserViewSet, UserTrackingViewSet
+from mysite.views import CryptocurrencyViewSet, TgUserViewSet, UserTrackingViewSet, dashboard
 
 router = routers.DefaultRouter()
 router.register(r'cryptocurrency', CryptocurrencyViewSet)
@@ -34,4 +34,5 @@ urlpatterns = [
     ),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('dashboard/', dashboard, name='dashboard'),
 ]

@@ -5,12 +5,26 @@
     <title>Главная страница</title>
 </head>
 <body>
-    <h1>Bitcoin: <span id="btc">---</span>$</h1>
+    <div id="prices"></div>
+
     <script>
         const ws = new WebSocket('ws://localhost:8000/ws/crypto/');
         ws.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            if (data.bitcoint) document.getElementById('btc').innetText = data.bitcoin;
+
+            for (const [coin, price] of Object.entries(data)) {
+                if (coin === "type") continue;
+
+                let el = document.getElementById(coin);
+                if (!el) {
+                    const h1 = document.createElement('h1');
+                    h1.innerHTML = `${coin}: <span id="${coin}">---</span>$`;
+                    document.getElementById('prices').appendChild(h1);
+                    el = document.getElementById(coin);
+                }
+
+                el.innerText = price;
+            }
         };
     </script>
 </body>
